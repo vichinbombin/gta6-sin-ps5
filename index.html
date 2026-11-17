@@ -19,7 +19,7 @@
   --sun: #ffc24f;
   --ink: #fbf1ff;
   --mute: #c3b2e0;
-  --panel: rgba(18, 9, 43, 0.86);
+  --panel: rgba(18, 9, 43, 0.95);
   --font-script: 'Yellowtail', 'Brush Script MT', cursive;
   --font-display: 'Barlow Condensed', 'Arial Narrow', Impact, sans-serif;
   --font-body: 'Barlow', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -40,52 +40,8 @@ body {
   overflow-x: hidden;
 }
 
-.backdrop { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+.backdrop { position: fixed; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; z-index: 0; }
 
-.stars {
-  position: absolute;
-  inset: 0 0 45% 0;
-  background-image:
-    radial-gradient(1.5px 1.5px at 12% 18%, #fff 50%, transparent 51%),
-    radial-gradient(1.5px 1.5px at 31% 62%, #fff 50%, transparent 51%),
-    radial-gradient(2px 2px at 48% 12%, var(--cyan) 50%, transparent 51%),
-    radial-gradient(1.5px 1.5px at 66% 44%, #fff 50%, transparent 51%),
-    radial-gradient(1.5px 1.5px at 83% 74%, #fff 50%, transparent 51%),
-    radial-gradient(2px 2px at 92% 28%, var(--sun) 50%, transparent 51%);
-  animation: twinkle 3.2s ease-in-out infinite alternate;
-}
-.stars.far {
-  background-image:
-    radial-gradient(1px 1px at 6% 52%, #fff 50%, transparent 51%),
-    radial-gradient(1px 1px at 22% 34%, #fff 50%, transparent 51%),
-    radial-gradient(1px 1px at 39% 80%, #fff 50%, transparent 51%),
-    radial-gradient(1px 1px at 57% 26%, #fff 50%, transparent 51%),
-    radial-gradient(1px 1px at 74% 8%, #fff 50%, transparent 51%),
-    radial-gradient(1px 1px at 88% 56%, #fff 50%, transparent 51%);
-  animation-duration: 4.7s;
-  animation-delay: -2s;
-}
-
-.floor {
-  position: absolute;
-  left: -60%;
-  right: -60%;
-  bottom: 0;
-  height: 80vh;
-  background-image:
-    linear-gradient(rgba(79, 230, 255, 0.55) 2px, transparent 2px),
-    linear-gradient(90deg, rgba(255, 79, 168, 0.55) 2px, transparent 2px);
-  background-size: 64px 64px;
-  transform: perspective(420px) rotateX(60deg);
-  transform-origin: bottom center;
-  -webkit-mask-image: linear-gradient(transparent 0%, #000 55%);
-  mask-image: linear-gradient(transparent 0%, #000 55%);
-  opacity: 0.8;
-  animation: drive 1.8s linear infinite;
-}
-
-@keyframes drive { to { background-position: 0 64px, 0 64px; } }
-@keyframes twinkle { from { opacity: 0.25; } to { opacity: 0.95; } }
 @keyframes sunrise { from { transform: translateY(0); } to { transform: translateY(-10px); } }
 
 .sky {
@@ -303,11 +259,7 @@ footer { font-size: 0.85rem; color: rgba(251, 241, 255, 0.85); max-width: 60ch; 
 </style>
 </head>
 <body>
-<div class="backdrop" aria-hidden="true">
-  <div class="stars"></div>
-  <div class="stars far"></div>
-  <div class="floor"></div>
-</div>
+<canvas class="backdrop" id="bg" aria-hidden="true"></canvas>
 
 <div class="sky">
   <div class="sun" aria-hidden="true"></div>
@@ -599,6 +551,98 @@ const hot = window.claude && window.claude.hot;
 if (hot && hot.snapshot) hot.snapshot(function () { return state; });
 if (hot && hot.ready) hot.ready(start);
 else start((hot && hot.data) || {});
+/* ---------- Fondo animado: estrellas y carretera de neón ---------- */
+(function () {
+  const cv = document.getElementById("bg");
+  const ctx = cv.getContext && cv.getContext("2d");
+  if (!ctx) return;
+  const still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let W = 0, H = 0, stars = [];
+
+  function resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth;
+    H = window.innerHeight;
+    cv.width = Math.round(W * dpr);
+    cv.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const count = Math.round(Math.min(140, Math.max(50, W / 10)));
+    stars = [];
+    for (let i = 0; i < count; i++) {
+      stars.push({
+        x: Math.random() * W,
+        y: Math.random() * H * 0.6,
+        r: 0.6 + Math.random() * 1.5,
+        speed: 0.6 + Math.random() * 1.8,
+        phase: Math.random() * 6.28,
+        tint: Math.random() < 0.2 ? "79,230,255" : (Math.random() < 0.15 ? "255,194,79" : "255,255,255")
+      });
+    }
+  }
+
+  function draw(ms) {
+    const t = ms / 1000;
+    const horizon = H * 0.62;
+    const cx = W / 2;
+    ctx.clearRect(0, 0, W, H);
+
+    for (const s of stars) {
+      const a = 0.2 + 0.8 * Math.abs(Math.sin(t * s.speed + s.phase));
+      ctx.fillStyle = "rgba(" + s.tint + "," + a.toFixed(3) + ")";
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, 6.2832);
+      ctx.fill();
+    }
+
+    const depth = H - horizon;
+    const glow = ctx.createLinearGradient(0, horizon, 0, H);
+    glow.addColorStop(0, "rgba(18,9,43,0)");
+    glow.addColorStop(1, "rgba(18,9,43,0.55)");
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, horizon, W, depth);
+
+    const fadeM = ctx.createLinearGradient(0, horizon, 0, H);
+    fadeM.addColorStop(0, "rgba(255,79,168,0)");
+    fadeM.addColorStop(0.35, "rgba(255,79,168,0.55)");
+    fadeM.addColorStop(1, "rgba(255,79,168,0.9)");
+    ctx.strokeStyle = fadeM;
+    ctx.lineWidth = 1.5;
+    const gap = Math.max(90, W / 9);
+    const n = Math.ceil((W * 3) / gap);
+    ctx.beginPath();
+    for (let i = -n; i <= n; i++) {
+      ctx.moveTo(cx + i * gap * 0.04, horizon);
+      ctx.lineTo(cx + i * gap * 2.6, H);
+    }
+    ctx.stroke();
+
+    const rows = 12;
+    const shift = (t * 0.45) % 1;
+    ctx.lineWidth = 2;
+    for (let k = 0; k < rows; k++) {
+      const z = (k + shift) / rows;
+      const y = horizon + depth * Math.pow(z, 2.4);
+      ctx.strokeStyle = "rgba(79,230,255," + (0.15 + 0.75 * z).toFixed(3) + ")";
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(W, y);
+      ctx.stroke();
+    }
+
+    ctx.strokeStyle = "rgba(255,194,79,0.55)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, horizon);
+    ctx.lineTo(W, horizon);
+    ctx.stroke();
+
+    if (!still) requestAnimationFrame(draw);
+  }
+
+  resize();
+  window.addEventListener("resize", function () { resize(); if (still) draw(0); });
+  if (still) draw(0); else requestAnimationFrame(draw);
+})();
 </script>
 </body>
 </html>
