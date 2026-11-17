@@ -40,7 +40,56 @@ body {
   overflow-x: hidden;
 }
 
+.backdrop { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+
+.stars {
+  position: absolute;
+  inset: 0 0 45% 0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 18%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 31% 62%, #fff 50%, transparent 51%),
+    radial-gradient(2px 2px at 48% 12%, var(--cyan) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 66% 44%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 83% 74%, #fff 50%, transparent 51%),
+    radial-gradient(2px 2px at 92% 28%, var(--sun) 50%, transparent 51%);
+  animation: twinkle 3.2s ease-in-out infinite alternate;
+}
+.stars.far {
+  background-image:
+    radial-gradient(1px 1px at 6% 52%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 22% 34%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 39% 80%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 57% 26%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 74% 8%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 88% 56%, #fff 50%, transparent 51%);
+  animation-duration: 4.7s;
+  animation-delay: -2s;
+}
+
+.floor {
+  position: absolute;
+  left: -60%;
+  right: -60%;
+  bottom: 0;
+  height: 80vh;
+  background-image:
+    linear-gradient(rgba(79, 230, 255, 0.55) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(255, 79, 168, 0.55) 2px, transparent 2px);
+  background-size: 64px 64px;
+  transform: perspective(420px) rotateX(60deg);
+  transform-origin: bottom center;
+  -webkit-mask-image: linear-gradient(transparent 0%, #000 55%);
+  mask-image: linear-gradient(transparent 0%, #000 55%);
+  opacity: 0.8;
+  animation: drive 1.8s linear infinite;
+}
+
+@keyframes drive { to { background-position: 0 64px, 0 64px; } }
+@keyframes twinkle { from { opacity: 0.25; } to { opacity: 0.95; } }
+@keyframes sunrise { from { transform: translateY(0); } to { transform: translateY(-10px); } }
+
 .sky {
+  z-index: 1;
   position: relative;
   max-width: 680px;
   margin: 0 auto;
@@ -62,6 +111,7 @@ body {
   mask-image: linear-gradient(#000 0 52%, transparent 52%), repeating-linear-gradient(180deg, #000 0 13px, transparent 13px 21px);
   opacity: 0.9;
   pointer-events: none;
+  animation: sunrise 6s ease-in-out infinite alternate;
 }
 
 header { position: relative; display: flex; flex-direction: column; gap: 2px; }
@@ -238,7 +288,7 @@ button, .btn {
 .linkish { align-self: flex-start; background: none; border: 0; padding: 4px 0; color: var(--mute); text-decoration: underline; text-underline-offset: 3px; }
 .linkish:hover { color: var(--ink); }
 
-footer { font-size: 0.85rem; color: rgba(251, 241, 255, 0.78); max-width: 60ch; }
+footer { font-size: 0.85rem; color: rgba(251, 241, 255, 0.85); max-width: 60ch; text-shadow: 0 1px 6px var(--night), 0 0 2px var(--night); }
 
 :focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; }
 
@@ -248,11 +298,17 @@ footer { font-size: 0.85rem; color: rgba(251, 241, 255, 0.78); max-width: 60ch; 
 }
 
 @media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; }
+  * { transition: none !important; animation: none !important; }
 }
 </style>
 </head>
 <body>
+<div class="backdrop" aria-hidden="true">
+  <div class="stars"></div>
+  <div class="stars far"></div>
+  <div class="floor"></div>
+</div>
+
 <div class="sky">
   <div class="sun" aria-hidden="true"></div>
 
@@ -274,7 +330,7 @@ footer { font-size: 0.85rem; color: rgba(251, 241, 255, 0.78); max-width: 60ch; 
    Cuando la web tenga dirección pública, pégala aquí entre las
    comillas. Los botones de compartir la agregan al mensaje.
    ============================================================ */
-const URL_PUBLICA = "";
+const URL_PUBLICA = "https://vichinbombin.github.io/gta6-sin-ps5/";
 
 const QUESTIONS = [
   {
@@ -353,29 +409,34 @@ const QUESTIONS = [
 
 const RESULTS = [
   {
-    min: 19,
+    min: 16,
     name: "Leyenda sin consola",
-    time: "Indefinida",
     text: "No tienes PS5, pero Leonida no puede contigo. Llevas años jugando en dificultad máxima: la vida real. Aquí por lo menos hay playa."
   },
   {
     min: 13,
     name: "Sobreviviente de fin de mes",
-    time: "2 meses",
     text: "Aguantas con arroz, favores y una bicicleta que no es tuya. No vas a ser rico en Vice City, pero tampoco vas a salir en las noticias."
   },
   {
-    min: 7,
+    min: 10,
     name: "Extra de fondo",
-    time: "3 días",
     text: "Eres la persona que camina por la vereda mientras a otros les pasan cosas. Sobrevives hasta que un auto se sube a esa vereda."
   },
   {
     min: 0,
     name: "Turista con crédito",
-    time: "14 minutos",
     text: "Llegaste con deudas, confianza y un tutorial equivocado. Leonida te devolvió al aeropuerto sin zapatillas."
   }
+];
+
+/* Supervivencia estimada según el puntaje exacto (0 a 24). */
+const TIMES = [
+  "4 minutos", "9 minutos", "14 minutos", "25 minutos", "40 minutos",
+  "1 hora", "2 horas", "5 horas", "9 horas", "1 día",
+  "2 días", "3 días", "5 días", "2 semanas", "1 mes",
+  "2 meses", "6 meses", "1 año", "3 años", "8 años",
+  "15 años", "30 años", "Hasta la jubilación", "Indefinida", "Eterna"
 ];
 
 const MAX_SCORE = QUESTIONS.length * 3;
@@ -396,7 +457,8 @@ function el(tag, attrs, children) {
 }
 
 function resultFor(score) {
-  return RESULTS.find(function (r) { return score >= r.min; });
+  const base = RESULTS.find(function (r) { return score >= r.min; });
+  return { name: base.name, text: base.text, time: TIMES[Math.max(0, Math.min(score, TIMES.length - 1))] };
 }
 
 function shareMessage(result) {
