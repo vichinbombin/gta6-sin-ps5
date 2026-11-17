@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿Sobrevivirías en Leonida sin PS5?</title>
+<meta name="description" content="Test de 8 preguntas para saber cuánto durarías en Leonida sin consola y sin plata.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:ital,wght@1,700;1,800&family=Yellowtail&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Layout: one narrow left-aligned column over a sunset sky. The striped sun
+     behind the title is the only loud element; the quiz card is the only box. */
+  --night: #12092b;
+  --dusk: #2b1257;
+  --magenta: #ff4fa8;
+  --cyan: #4fe6ff;
+  --sun: #ffc24f;
+  --ink: #fbf1ff;
+  --mute: #c3b2e0;
+  --panel: rgba(18, 9, 43, 0.86);
+  --font-script: 'Yellowtail', 'Brush Script MT', cursive;
+  --font-display: 'Barlow Condensed', 'Arial Narrow', Impact, sans-serif;
+  --font-body: 'Barlow', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+
+body {
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--night);
+  background-image: linear-gradient(180deg, #12092b 0%, #2b1257 38%, #6d1d6c 72%, #c23e78 100%);
+  background-attachment: fixed;
+  overflow-x: hidden;
+}
+
+.sky {
+  position: relative;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 40px 20px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.sun {
+  position: absolute;
+  top: 18px;
+  right: -40px;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, var(--sun) 0%, #ff8a5c 48%, var(--magenta) 100%);
+  -webkit-mask-image: linear-gradient(#000 0 52%, transparent 52%), repeating-linear-gradient(180deg, #000 0 13px, transparent 13px 21px);
+  mask-image: linear-gradient(#000 0 52%, transparent 52%), repeating-linear-gradient(180deg, #000 0 13px, transparent 13px 21px);
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+header { position: relative; display: flex; flex-direction: column; gap: 2px; }
+
+.eyebrow {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin: 0 0 6px;
+}
+
+h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 800;
+  font-size: clamp(2.2rem, 9vw, 3.4rem);
+  line-height: 0.95;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-shadow: 3px 3px 0 var(--dusk);
+  text-wrap: balance;
+}
+
+h1 .script {
+  display: block;
+  font-family: var(--font-script);
+  font-style: normal;
+  font-weight: 400;
+  font-size: clamp(4.2rem, 19vw, 7rem);
+  line-height: 0.95;
+  text-transform: none;
+  color: var(--magenta);
+  text-shadow: 0 0 6px rgba(255, 79, 168, 0.9), 0 0 26px rgba(255, 79, 168, 0.55), 3px 3px 0 var(--night);
+  margin: 2px 0 6px -4px;
+  transform: rotate(-4deg);
+  transform-origin: left center;
+}
+
+.card {
+  position: relative;
+  background: var(--panel);
+  border: 1px solid rgba(79, 230, 255, 0.45);
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px rgba(18, 9, 43, 0.9), 0 0 28px rgba(79, 230, 255, 0.16);
+  padding: 24px 22px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.card p { margin: 0; max-width: 60ch; }
+.lead { font-size: 1.1rem; }
+.mute { color: var(--mute); }
+
+.rules { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px 18px; color: var(--mute); font-size: 0.95rem; }
+.rules b { color: var(--sun); font-weight: 600; }
+
+h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 800;
+  font-size: clamp(1.6rem, 6vw, 2.1rem);
+  line-height: 1.05;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.progress { display: flex; flex-direction: column; gap: 8px; }
+.progress-label {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+}
+.bar { height: 6px; background: rgba(251, 241, 255, 0.14); border-radius: 3px; overflow: hidden; }
+.bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--cyan), var(--magenta)); transition: width 0.3s ease; }
+
+.options { display: flex; flex-direction: column; gap: 10px; }
+
+button, .btn {
+  font: inherit;
+  color: var(--ink);
+  cursor: pointer;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.option {
+  text-align: left;
+  padding: 13px 16px;
+  background: rgba(251, 241, 255, 0.05);
+  border: 1px solid rgba(251, 241, 255, 0.28);
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+}
+.option:hover:not(:disabled) { border-color: var(--magenta); background: rgba(255, 79, 168, 0.12); transform: translateX(3px); }
+.option:disabled { cursor: default; opacity: 0.45; }
+.option.picked { opacity: 1; border-color: var(--magenta); background: rgba(255, 79, 168, 0.2); box-shadow: 0 0 14px rgba(255, 79, 168, 0.35); }
+
+.reaction {
+  border-left: 3px solid var(--sun);
+  padding: 4px 0 4px 14px;
+  color: var(--sun);
+  font-weight: 500;
+}
+
+.primary {
+  align-self: flex-start;
+  padding: 13px 26px;
+  border: 0;
+  background: var(--magenta);
+  color: var(--night);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  box-shadow: 4px 4px 0 var(--cyan);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.primary:hover { transform: translate(-1px, -1px); box-shadow: 6px 6px 0 var(--cyan); }
+.primary:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--cyan); }
+
+.result-name {
+  font-family: var(--font-script);
+  font-size: clamp(2.8rem, 12vw, 4.2rem);
+  line-height: 1;
+  color: var(--cyan);
+  text-shadow: 0 0 6px rgba(79, 230, 255, 0.85), 0 0 24px rgba(79, 230, 255, 0.45);
+  margin: 0;
+  text-wrap: balance;
+}
+
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 0; }
+.stats div { border-top: 2px solid var(--magenta); padding-top: 8px; }
+.stats dt { font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mute); }
+.stats dd { margin: 2px 0 0; font-family: var(--font-display); font-style: italic; font-weight: 800; font-size: 1.7rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+
+.share { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn.ghost, button.ghost {
+  padding: 10px 16px;
+  background: transparent;
+  border: 1px solid var(--cyan);
+  color: var(--cyan);
+  font-weight: 600;
+}
+.btn.ghost:hover, button.ghost:hover { background: rgba(79, 230, 255, 0.14); }
+
+.sharetext {
+  width: 100%;
+  min-height: 84px;
+  resize: vertical;
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--ink);
+  background: rgba(251, 241, 255, 0.06);
+  border: 1px dashed rgba(251, 241, 255, 0.35);
+  border-radius: 4px;
+  padding: 10px 12px;
+}
+
+.note { min-height: 1.4em; font-size: 0.92rem; color: var(--sun); }
+
+.linkish { align-self: flex-start; background: none; border: 0; padding: 4px 0; color: var(--mute); text-decoration: underline; text-underline-offset: 3px; }
+.linkish:hover { color: var(--ink); }
+
+footer { font-size: 0.85rem; color: rgba(251, 241, 255, 0.78); max-width: 60ch; }
+
+:focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; }
+
+@media (max-width: 420px) {
+  .sun { width: 200px; height: 200px; right: -60px; }
+  .card { padding: 20px 16px 22px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="sky">
+  <div class="sun" aria-hidden="true"></div>
+
+  <header>
+    <p class="eyebrow">Test no oficial · 8 preguntas</p>
+    <h1>¿Sobrevivirías en <span class="script">Leonida</span> sin PS5?</h1>
+  </header>
+
+  <main class="card" id="app" aria-live="polite"></main>
+
+  <footer>
+    Test hecho por fans, por humor. Sin relación con Rockstar Games ni con Take-Two Interactive.
+  </footer>
+</div>
+
+<script>
+/* ============================================================
+   CONFIGURACIÓN
+   Cuando la web tenga dirección pública, pégala aquí entre las
+   comillas. Los botones de compartir la agregan al mensaje.
+   ============================================================ */
+const URL_PUBLICA = "";
+
+const QUESTIONS = [
+  {
+    q: "GTA 6 sale este jueves. ¿Cuál es tu plan?",
+    opts: [
+      { t: "Verlo por stream comiendo fideos", p: 3, r: "Plan sólido. Costo total: un paquete de fideos." },
+      { t: "Caer a la casa del amigo que sí tiene PS5, sin avisar", p: 2, r: "Lleva algo para comer o no te abren." },
+      { t: "Decir que prefiero esperar la versión de PC", p: 1, r: "Versión de PC que nadie ha anunciado. Te vemos en unos años." },
+      { t: "Pedir un crédito de consumo", p: 0, r: "El banco de Vice City te manda saludos." }
+    ]
+  },
+  {
+    q: "Llegas a Vice City con lo puesto. ¿Dónde duermes?",
+    opts: [
+      { t: "En el sillón de un primo lejano en Port Gellhorn", p: 3, r: "El primo no está feliz, pero es familia." },
+      { t: "En la playa, gratis y con vista al mar", p: 2, r: "Cinco estrellas hasta que sube la marea." },
+      { t: "En el auto. No tengo auto. En un auto.", p: 1, r: "Técnicamente ya partiste la historia principal." },
+      { t: "Hotel frente al mar, lo pago después", p: 0, r: "\"Después\" llegó a la mañana siguiente." }
+    ]
+  },
+  {
+    q: "Tu medio de transporte en Leonida:",
+    opts: [
+      { t: "Bicicleta prestada, sin fecha de devolución", p: 3, r: "Cero bencina, cero patente, cero remordimiento." },
+      { t: "Transporte público, si es que pasa", p: 2, r: "Llevas 40 minutos en el paradero. Igual que acá." },
+      { t: "A pie, como en la vida real", p: 1, r: "El mapa es enorme. Suerte con eso." },
+      { t: "Deportivo financiado en 72 cuotas", p: 0, r: "Te lo robaron en la cuota 2. Quedan 70." }
+    ]
+  },
+  {
+    q: "Un caimán te bloquea el paso en Grassrivers.",
+    opts: [
+      { t: "Doy la vuelta. Él tiene casa propia y yo no. Respeto.", p: 3, r: "Humildad: la mejor arma del juego." },
+      { t: "Intento negociar con él", p: 2, r: "No llegaron a acuerdo, pero conservas las dos piernas." },
+      { t: "Le saco una foto para el estado de WhatsApp", p: 1, r: "Linda foto. Fue la última." },
+      { t: "Lo enfrento, vi un tutorial", p: 0, r: "El tutorial era de otro juego." }
+    ]
+  },
+  {
+    q: "Te quedan 20 dólares hasta fin de mes.",
+    opts: [
+      { t: "Arroz, huevo y fe", p: 3, r: "La dieta oficial del que no tiene PS5." },
+      { t: "Le presto 10 a un amigo", p: 2, r: "Buen corazón. Mala contabilidad." },
+      { t: "Una entrada al club para hacer contactos", p: 1, r: "Hiciste un contacto. Te debe plata también." },
+      { t: "Los invierto en la cripto que me recomendó un tipo en la playa", p: 0, r: "El tipo de la playa ya no está en la playa." }
+    ]
+  },
+  {
+    q: "Tu amigo con PS5 te presta el control 20 minutos. ¿Qué haces?",
+    opts: [
+      { t: "Caos total. La partida no es mía.", p: 3, r: "Así se juega. Tu amigo ya no es tu amigo." },
+      { t: "Abro el mapa para ver todo lo que me estoy perdiendo", p: 2, r: "Veinte minutos de sufrimiento informado." },
+      { t: "Manejo respetando los semáforos", p: 1, r: "Te quitó el control a los 4 minutos." },
+      { t: "Guardo encima de su partida sin querer", p: 0, r: "No vuelvas a esa casa." }
+    ]
+  },
+  {
+    q: "¿Cuál es tu relación actual con el PS5?",
+    opts: [
+      { t: "Lo vi una vez en una vitrina", p: 3, r: "Y él no te vio a ti. Amor no correspondido." },
+      { t: "Lo tengo en el carrito de compras hace años", p: 2, r: "El carrito ya te manda correos preocupado." },
+      { t: "Mi primo tiene uno y no me contesta", p: 1, r: "Sabe perfectamente por qué le escribes." },
+      { t: "Tengo uno", p: 0, r: "Entonces este test no es para ti. Quédate igual." }
+    ]
+  },
+  {
+    q: "En Vice City te ofrecen un \"trabajito rápido\".",
+    opts: [
+      { t: "Pregunto si tiene contrato y colación", p: 3, r: "No tenía ninguna de las dos. Te salvaste." },
+      { t: "Pido la mitad por adelantado", p: 2, r: "Te dieron un cuarto. Negociador nato." },
+      { t: "Lo consulto con mi mamá", p: 1, r: "Dijo que no. También dijo que te abrigues." },
+      { t: "Acepto. ¿Qué puede salir mal?", p: 0, r: "Todo. Salió mal todo." }
+    ]
+  }
+];
+
+const RESULTS = [
+  {
+    min: 19,
+    name: "Leyenda sin consola",
+    time: "Indefinida",
+    text: "No tienes PS5, pero Leonida no puede contigo. Llevas años jugando en dificultad máxima: la vida real. Aquí por lo menos hay playa."
+  },
+  {
+    min: 13,
+    name: "Sobreviviente de fin de mes",
+    time: "2 meses",
+    text: "Aguantas con arroz, favores y una bicicleta que no es tuya. No vas a ser rico en Vice City, pero tampoco vas a salir en las noticias."
+  },
+  {
+    min: 7,
+    name: "Extra de fondo",
+    time: "3 días",
+    text: "Eres la persona que camina por la vereda mientras a otros les pasan cosas. Sobrevives hasta que un auto se sube a esa vereda."
+  },
+  {
+    min: 0,
+    name: "Turista con crédito",
+    time: "14 minutos",
+    text: "Llegaste con deudas, confianza y un tutorial equivocado. Leonida te devolvió al aeropuerto sin zapatillas."
+  }
+];
+
+const MAX_SCORE = QUESTIONS.length * 3;
+const app = document.getElementById("app");
+let state = { step: -1, score: 0, picked: null };
+
+function el(tag, attrs, children) {
+  const node = document.createElement(tag);
+  if (attrs) {
+    for (const key in attrs) {
+      if (key === "text") node.textContent = attrs[key];
+      else if (key === "class") node.className = attrs[key];
+      else node.setAttribute(key, attrs[key]);
+    }
+  }
+  (children || []).forEach(function (c) { if (c) node.appendChild(c); });
+  return node;
+}
+
+function resultFor(score) {
+  return RESULTS.find(function (r) { return score >= r.min; });
+}
+
+function shareMessage(result) {
+  let msg = "Hice el test \"¿Sobrevivirías en Leonida sin PS5?\" y me salió: " + result.name +
+    ". Supervivencia estimada: " + result.time.toLowerCase() + ".";
+  if (URL_PUBLICA) msg += " Haz el tuyo: " + URL_PUBLICA;
+  return msg;
+}
+
+function go(next) {
+  state = next;
+  render();
+  window.scrollTo({ top: 0, behavior: "auto" });
+}
+
+function renderIntro() {
+  const start = el("button", { class: "primary", type: "button", id: "start", text: "Empezar el test" });
+  start.addEventListener("click", function () { go({ step: 0, score: 0, picked: null }); });
+  app.replaceChildren(
+    el("p", { class: "lead", text: "El jueves sale GTA 6 y tú, igual que la mayoría, no tienes dónde jugarlo. Tranquilo: en Leonida tampoco te iría tan bien." }),
+    el("p", { class: "mute", text: "Responde con honestidad. Te decimos cuánto durarías en Vice City con el presupuesto que tienes de verdad." }),
+    el("ul", { class: "rules" }, [
+      el("li", null, [el("b", { text: "8" }), document.createTextNode(" preguntas")]),
+      el("li", null, [el("b", { text: "1" }), document.createTextNode(" minuto")]),
+      el("li", null, [el("b", { text: "0" }), document.createTextNode(" consolas necesarias")])
+    ]),
+    start
+  );
+}
+
+function renderQuestion() {
+  const item = QUESTIONS[state.step];
+  const answered = state.picked !== null;
+  const last = state.step === QUESTIONS.length - 1;
+
+  const options = el("div", { class: "options", role: "group", "aria-label": "Opciones" });
+  item.opts.forEach(function (opt, i) {
+    const b = el("button", { class: "option" + (state.picked === i ? " picked" : ""), type: "button", id: "opt-" + i, text: opt.t });
+    if (answered) b.disabled = true;
+    b.addEventListener("click", function () {
+      state = { step: state.step, score: state.score + opt.p, picked: i };
+      render();
+      const nextBtn = document.getElementById("next");
+      if (nextBtn) nextBtn.focus();
+    });
+    options.appendChild(b);
+  });
+
+  let reaction = null;
+  let next = null;
+  if (answered) {
+    reaction = el("p", { class: "reaction", text: item.opts[state.picked].r });
+    next = el("button", { class: "primary", type: "button", id: "next", text: last ? "Ver mi resultado" : "Siguiente" });
+    next.addEventListener("click", function () {
+      go({ step: state.step + 1, score: state.score, picked: null });
+    });
+  }
+
+  const pct = Math.round(((state.step + (answered ? 1 : 0)) / QUESTIONS.length) * 100);
+  const bar = el("div", { class: "bar" }, [el("span")]);
+  bar.firstChild.style.width = pct + "%";
+
+  const parts = [
+    el("div", { class: "progress" }, [
+      el("div", { class: "progress-label", text: "Pregunta " + (state.step + 1) + " de " + QUESTIONS.length }),
+      bar
+    ]),
+    el("h2", { text: item.q }),
+    options,
+    reaction,
+    next
+  ].filter(Boolean);
+  app.replaceChildren.apply(app, parts);
+}
+
+function renderResult() {
+  const result = resultFor(state.score);
+  const msg = shareMessage(result);
+  const enc = encodeURIComponent(msg);
+
+  const box = el("textarea", { class: "sharetext", id: "sharetext", readonly: "", "aria-label": "Texto para compartir" });
+  box.value = msg;
+
+  const note = el("p", { class: "note", id: "note", role: "status" });
+
+  const copy = el("button", { class: "ghost", type: "button", id: "copy", text: "Copiar texto" });
+  copy.addEventListener("click", function () {
+    const fallback = function () {
+      box.focus();
+      box.select();
+      note.textContent = "Texto seleccionado. Cópialo con Ctrl+C o manteniéndolo presionado.";
+    };
+    try {
+      navigator.clipboard.writeText(msg).then(function () {
+        note.textContent = "Copiado. Pégalo donde quieras.";
+      }, fallback);
+    } catch (e) {
+      fallback();
+    }
+  });
+
+  const again = el("button", { class: "linkish", type: "button", id: "again", text: "Hacer el test de nuevo" });
+  again.addEventListener("click", function () { go({ step: -1, score: 0, picked: null }); });
+
+  app.replaceChildren(
+    el("div", { class: "progress-label", text: "Tu resultado" }),
+    el("p", { class: "result-name", text: result.name }),
+    el("p", { class: "lead", text: result.text }),
+    el("dl", { class: "stats" }, [
+      el("div", null, [el("dt", { text: "Supervivencia estimada" }), el("dd", { text: result.time })]),
+      el("div", null, [el("dt", { text: "Puntaje de calle" }), el("dd", { text: state.score + " / " + MAX_SCORE })])
+    ]),
+    box,
+    el("div", { class: "share" }, [
+      el("a", { class: "btn ghost", id: "share-x", target: "_blank", rel: "noopener", href: "https://twitter.com/intent/tweet?text=" + enc, text: "Compartir en X" }),
+      el("a", { class: "btn ghost", id: "share-wa", target: "_blank", rel: "noopener", href: "https://wa.me/?text=" + enc, text: "Compartir en WhatsApp" }),
+      copy
+    ]),
+    note,
+    again
+  );
+}
+
+function render() {
+  if (state.step < 0) renderIntro();
+  else if (state.step >= QUESTIONS.length) renderResult();
+  else renderQuestion();
+}
+
+function start(saved) {
+  if (saved && typeof saved.step === "number" && typeof saved.score === "number") {
+    state = { step: saved.step, score: saved.score, picked: saved.picked === undefined ? null : saved.picked };
+  }
+  render();
+}
+
+const hot = window.claude && window.claude.hot;
+if (hot && hot.snapshot) hot.snapshot(function () { return state; });
+if (hot && hot.ready) hot.ready(start);
+else start((hot && hot.data) || {});
+</script>
+</body>
+</html>
